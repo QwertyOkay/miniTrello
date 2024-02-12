@@ -8,15 +8,18 @@ function Column({ column, board, setBoard }) {
     column.taskIds.map((taskId) => board.tasks[taskId])
   );
 
+  // Effect to update tasks when taskIds or board.tasks change
   useEffect(() => {
     setTasks(column.taskIds.map((taskId) => board.tasks[taskId]));
   }, [column.taskIds, board.tasks]);
 
+  // Function to sort tasks by creation date
   const sortTasksByCreatedAt = () => {
     const sortedTasks = [...tasks].sort(
       (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
     );
     const sortedTaskIds = sortedTasks.map((task) => task.id);
+    // Update board state with sorted taskIds for the column
     setBoard((prevBoard) => ({
       ...prevBoard,
       columns: {
@@ -33,15 +36,13 @@ function Column({ column, board, setBoard }) {
     setTasks((prevTasks) => [...prevTasks, newTask]);
   };
 
+  // Function to remove the column from the board
   const handleClose = () => {
     const newColumns = { ...board.columns };
     delete newColumns[column.id];
     const newColumnOrder = board.columnOrder.filter((id) => id !== column.id);
-    setBoard({
-      ...board,
-      columns: newColumns,
-      columnOrder: newColumnOrder,
-    });
+    // Update board state to remove the column and update columnOrder
+    setBoard({ ...board, columns: newColumns, columnOrder: newColumnOrder });
   };
 
   const columnIndex = board.columnOrder.indexOf(column.id);

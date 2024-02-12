@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { MdOutlineAddBox } from "react-icons/md";
 
+// AddColumn component for adding new columns to the board
 function AddColumn(props) {
   const [newColButton, setNewColButton] = useState(true);
   const [value, setValue] = useState("");
@@ -10,6 +11,7 @@ function AddColumn(props) {
     setValue(value);
   }
 
+  // Adds a new column when input is confirmed
   function handleInputChange() {
     if (value) {
       setNewColButton(true);
@@ -20,6 +22,7 @@ function AddColumn(props) {
     }
   }
 
+  // Function to create a new column and update the board state
   function addNewColumn(title) {
     const newColumnId = "column" + Math.floor(Math.random() * 10000000);
     const newColumnOrder = Array.from(props.board.columnOrder);
@@ -28,9 +31,10 @@ function AddColumn(props) {
     const newColumn = {
       id: newColumnId,
       title: title,
-      taskIds: [],
+      taskIds: [], // Initialize an empty array for task IDs
     };
 
+    // Update the board state with the new column and updated column order
     props.setBoard({
       ...props.board,
       columns: {
@@ -40,6 +44,7 @@ function AddColumn(props) {
       columnOrder: newColumnOrder,
     });
   }
+
   return (
     <div className="text-[#026AA7] border-2 border-slate-300 dark:border-slate-700 dark:bg-slate-800 m-2 rounded-xl w-52 min-h-[300px] flex flex-col justify-center items-center p-2">
       {newColButton ? (
@@ -55,7 +60,7 @@ function AddColumn(props) {
           onBlur={handleInputChange}
           onKeyDown={({ key }) => {
             if (key === "Enter") {
-              return handleInputChange();
+              return handleInputChange(); // Confirm input on Enter key press
             }
           }}
         />

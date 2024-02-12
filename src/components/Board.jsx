@@ -10,10 +10,12 @@ function Board() {
   const onDragEnd = (result) => {
     const { destination, source, draggableId, type } = result;
 
+    // If there's no destination (e.g., item is dropped outside), do nothing
     if (!destination) {
       return;
     }
 
+    // If the item is dropped in the same place it started, do nothing
     if (
       destination.droppableId === source.droppableId &&
       destination.index === source.index
@@ -23,9 +25,11 @@ function Board() {
 
     if (type === "column") {
       const newColumnOrder = Array.from(board.columnOrder);
+      // Remove the column from its original position and insert it at the new position
       newColumnOrder.splice(source.index, 1);
       newColumnOrder.splice(destination.index, 0, draggableId);
 
+      // Update the board state with the new column order
       setBoard((prevBoard) => ({
         ...prevBoard,
         columnOrder: newColumnOrder,
@@ -36,8 +40,10 @@ function Board() {
     const startColumn = board.columns[source.droppableId];
     const finishColumn = board.columns[destination.droppableId];
 
+    // Reordering tasks within the same column
     if (startColumn === finishColumn) {
       const newTaskIds = Array.from(startColumn.taskIds);
+      // Remove the task from its original position and insert it at the new position
       newTaskIds.splice(source.index, 1);
       newTaskIds.splice(destination.index, 0, draggableId);
 
@@ -46,6 +52,7 @@ function Board() {
         taskIds: newTaskIds,
       };
 
+      // Update the board state with the new task order in the column
       setBoard((prevBoard) => ({
         ...prevBoard,
         columns: {
@@ -54,6 +61,7 @@ function Board() {
         },
       }));
     } else {
+      // Moving tasks between different columns
       const startTaskIds = Array.from(startColumn.taskIds);
       startTaskIds.splice(source.index, 1);
       const newStartColumn = {
@@ -68,6 +76,7 @@ function Board() {
         taskIds: finishTaskIds,
       };
 
+      // Update the board state to reflect the task movement between columns
       setBoard((prevBoard) => ({
         ...prevBoard,
         columns: {
