@@ -1,70 +1,56 @@
-// import { Draggable } from "react-beautiful-dnd";
-
-// function Task(props) {
-//   function deleteTask(columnId, index, taskId) {
-//     // to remove the task from taskIds in related column
-//     const column = props.board.columns[columnId];
-//     const newTaskIds = Array.from(column.taskIds);
-//     newTaskIds.splice(index, 1);
-
-//     // to remove the task from general tasks in board_data
-//     const tasks = props.board.tasks;
-//     const { [taskId]: oldTask, ...newTasks } = tasks;
-
-//     props.setBoard({
-//       ...props.board,
-//       tasks: {
-//         ...newTasks,
-//       },
-//       columns: {
-//         ...props.board.columns,
-//         [columnId]: {
-//           ...column,
-//           taskIds: newTaskIds,
-//         },
-//       },
-//     });
-//   }
-
-//   return (
-//     <Draggable draggableId={props.task.id} index={props.index}>
-//       {(provided) => (
-//         <div
-//           className="shadow-[0px_1px_1px_#091e4240,0px_0px_1px_#091e424f] text-[#172b4d] border dark:border-slate-700 rounded-md p-2 mb-2 bg-slate-200 dark:bg-slate-600 text-slate-700 dark:text-white"
-//           onDoubleClick={() =>
-//             deleteTask(props.columnId, props.index, props.task.id)
-//           }
-//           {...provided.draggableProps}
-//           {...provided.dragHandleProps}
-//           ref={provided.innerRef}
-//         >
-//           <p className="font-small">{props.task.content}</p>
-//         </div>
-//       )}
-//     </Draggable>
-//   );
-// }
-
-// export default Task;
-
+import React, { useState } from "react";
 import { Draggable } from "react-beautiful-dnd";
 
 function Task({ task, index, columnId, board, setBoard }) {
-  const deleteTask = (taskId) => {
-    const column = board.columns[columnId];
-    const newTaskIds = column.taskIds.filter((id) => id !== taskId);
+  const [isEditing, setIsEditing] = useState(false);
+  const [newContent, setNewContent] = useState(task.content);
 
+  const toggleEdit = () => {
+    setIsEditing(!isEditing);
+  };
+
+  const handleContentChange = (e) => {
+    setNewContent(e.target.value);
+  };
+
+  const handleBlur = () => {
+    updateTaskContent();
+    setIsEditing(false);
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      updateTaskContent();
+      setIsEditing(false);
+    }
+  };
+
+  const updateTaskContent = () => {
+    setBoard((prevBoard) => {
+      const updatedTasks = {
+        ...prevBoard.tasks,
+        [task.id]: { ...task, content: newContent },
+      };
+      return { ...prevBoard, tasks: updatedTasks };
+    });
+  };
+
+  const deleteTask = () => {
+    const newTaskIds = board.columns[columnId].taskIds.filter(
+      (id) => id !== task.id
+    );
     setBoard((prevBoard) => ({
       ...prevBoard,
       columns: {
         ...prevBoard.columns,
         [columnId]: {
-          ...column,
+          ...prevBoard.columns[columnId],
           taskIds: newTaskIds,
         },
       },
       tasks: Object.keys(prevBoard.tasks).reduce((acc, key) => {
-        if (key !== taskId) {
+        if (key !== task.id) {
           acc[key] = prevBoard.tasks[key];
         }
         return acc;
@@ -80,9 +66,26 @@ function Task({ task, index, columnId, board, setBoard }) {
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           ref={provided.innerRef}
-          onDoubleClick={() => deleteTask(task.id)}
+          onDoubleClick={toggleEdit}
         >
-          <p className="font-small">{task.content}</p>
+          {isEditing ? (
+            <textarea
+              className="w-full h-full p-1 text-sm"
+              value={newContent}
+              onChange={handleContentChange}
+              onBlur={handleBlur}
+              onKeyPress={handleKeyPress}
+              autoFocus
+            />
+          ) : (
+            <p className="font-small">{task.content}</p>
+          )}
+          <button
+            onClick={deleteTask}
+            className="text-xs text-red-500 hover:text-red-700"
+          >
+            Delete
+          </button>
         </div>
       )}
     </Draggable>

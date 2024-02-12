@@ -1,9 +1,9 @@
 export const board_data = {
     tasks: {
-    task1: {id: 'task1', content: 'Hold the Column or task to drag in between them.', createdAt: new Date().toISOString()},
-    task2: {id: 'task2', content: 'Press + to add new Column.', createdAt: new Date().toISOString()},
-    task3: {id: 'task3', content: 'Press + inside column to add task.', createdAt: new Date().toISOString()},
-    task4: {id: 'task4', content: 'Double-click on task to delete.', createdAt: new Date().toISOString()}
+    task1: {id: 'task1', content: 'Drag the column or task to move it between others.', createdAt: new Date().toISOString()},
+    task2: {id: 'task2', content: 'Click on the plus sign to create a new column.', createdAt: new Date().toISOString()},
+    task3: {id: 'task3', content: 'Click the plus sign within a column to insert a task.', createdAt: new Date().toISOString()},
+    task4: {id: 'task4', content: 'Double-tap on the task to initiate editing', createdAt: new Date().toISOString()}
 },
     columns: {
         column1: {
